@@ -15,7 +15,7 @@ public class TbTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "transaction_id", nullable = false)
+    @Column(name = "transaction_id", nullable = false, unique = true)
     private String transactionId;
 
     @Column(name = "amount", nullable = false)
