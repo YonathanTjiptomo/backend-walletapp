@@ -16,7 +16,7 @@ public class EwalletApplication {
 		SpringApplication.run(EwalletApplication.class, args);
 	}
 
-	@Bean
+    @Bean
 	public FirebaseAuth firebaseAuth() throws IOException {
 		InputStream serviceAccount = getClass().getResourceAsStream("/serviceAccountKey.json");
 

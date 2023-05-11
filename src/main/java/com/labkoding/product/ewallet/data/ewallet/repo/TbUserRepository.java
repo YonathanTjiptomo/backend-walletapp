@@ -4,7 +4,10 @@ import com.labkoding.product.ewallet.data.ewallet.model.TbUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface UserRepository extends JpaRepository<TbUser, Integer> {
+import java.util.Optional;
 
+@Repository
+public interface TbUserRepository extends JpaRepository<TbUser, Integer> {
+    Optional<TbUser> findByUid(String uid);
+    Optional<TbUser> findByVirtualAccount(String virtualAccount);
 }

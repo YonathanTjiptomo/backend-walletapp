@@ -1,9 +1,14 @@
 package com.labkoding.product.ewallet.data.ewallet.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Setter
+@Getter
 @Entity
-@Table(name = "tb_userid")
+@Table(name = "tb_user")
 public class TbUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,20 +20,7 @@ public class TbUser {
     @Column(name = "uid", nullable = false, unique = true)
     private String uid;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
+    @Column(name = "virtual_account", nullable = false, unique = true)
+    private String virtualAccount;
 
 }
