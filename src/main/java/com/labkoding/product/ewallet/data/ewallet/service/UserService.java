@@ -6,6 +6,8 @@ import com.labkoding.product.ewallet.data.ewallet.model.TbUser;
 import com.labkoding.product.ewallet.data.ewallet.repo.TbUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     FirebaseAuth firebaseAuth;
@@ -32,5 +34,13 @@ public class UserService {
             return null;
         }
         return user.getVirtualAccount();
+    }
+
+    public Integer getId(String uid) throws FirebaseAuthException{
+        TbUser user = userRepository.findByUid(uid).orElse(null);
+        if (user == null){
+            return null;
+        }
+        return user.getId();
     }
 }

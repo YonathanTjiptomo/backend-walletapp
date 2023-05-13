@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface TbUserRepository extends JpaRepository<TbUser, Integer> {
     Optional<TbUser> findByUid(String uid);
     Optional<TbUser> findByVirtualAccount(String virtualAccount);
+
 }
