@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface TbMoneyRepository extends JpaRepository<TbMoney, Integer> {
     Optional<TbMoney> findByUid(String uid);
-    Optional<TbMoney> findByAmount(BigDecimal saldo);
-
 }

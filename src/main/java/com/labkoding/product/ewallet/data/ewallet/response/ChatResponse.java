@@ -8,8 +8,6 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class ChatResponse {
-    private Integer id;
-    private String status;
     private String message;
-    private BigDecimal amount;
+    private String status;
 }

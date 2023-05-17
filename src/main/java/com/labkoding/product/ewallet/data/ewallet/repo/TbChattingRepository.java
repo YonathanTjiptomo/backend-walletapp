@@ -2,9 +2,11 @@ package com.labkoding.product.ewallet.data.ewallet.repo;
 
 import com.labkoding.product.ewallet.data.ewallet.model.TbChatting;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
+@Repository
 public interface TbChattingRepository extends JpaRepository<TbChatting, Integer> {
-    Optional<TbChatting> findById(Integer id);
+    List<TbChatting> findByUserIdFrom(String uid);
 }
