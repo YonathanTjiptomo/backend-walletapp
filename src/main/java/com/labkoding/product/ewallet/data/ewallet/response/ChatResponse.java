@@ -9,5 +9,6 @@ import java.math.BigDecimal;
 @Getter
 public class ChatResponse {
     private String message;
+    private BigDecimal amount;
     private String status;
 }

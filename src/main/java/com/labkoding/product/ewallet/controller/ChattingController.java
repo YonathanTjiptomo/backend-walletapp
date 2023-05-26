@@ -41,11 +41,16 @@ public class ChattingController {
         tbChatting.setUserIdFrom(uid);
         tbChatting.setCreatedBy(uid);
         tbChatting.setUpdatedBy(uid);
-        tbChatting.setUserIdTo(String.valueOf(2));
+        String friendId = chatRequest.getUserIdTo();
+        BigDecimal amount = chatRequest.getAmount();
+        tbChatting.setUserIdTo(friendId);
+        tbChatting.setAmount(amount);
         tbChattingRepository.save(tbChatting);
         BigDecimal saldo = moneyService.getMoney(uid);
-        BigDecimal amount = chatRequest.getAmount();
         TbMoney tbMoney = tbMoneyRepository.findByUid(uid).orElse(null);
+        if (tbMoney == null){
+            return null;
+        }
         tbMoney.setAmount(tbMoney.getAmount().subtract(amount));
         if (saldo.compareTo(amount)<0) {
             throw new ResourceNotFoundException("Money not enough");
@@ -53,6 +58,7 @@ public class ChattingController {
         tbMoneyRepository.save(tbMoney);
         TbTransaction tbTransaction = new TbTransaction();
         tbTransaction.setAmount(amount);
+        tbTransaction.setUserId(uid);
         tbTransaction.setStatus(1);
         tbTransaction.setTransactionId(UUID.randomUUID().toString());
         tbTransaction.setDescription("Send Money");
@@ -60,15 +66,24 @@ public class ChattingController {
         tbTransactionRepository.save(tbTransaction);
         ChatResponse response = new ChatResponse();
         response.setMessage(message);
+        response.setAmount(amount);
+        response.setStatus("success");
         return response;
     }
 
     @PostMapping(value = "/get-message", produces = "application/json")
     public List<String> getMessage(@RequestBody Map<String, String> request, @RequestParam("uid") String uid) {
-        List<TbChatting> chattingList = tbChattingRepository.findByUserIdFrom(uid);
+        String userIdTo = request.get("userIdTo");
+        List<TbChatting> chattingList = tbChattingRepository.findByUserIdFromAndUserIdToOrUserIdFromAndUserIdTo(uid, userIdTo, userIdTo, uid);
         List<String> messages = new ArrayList<>();
         for (TbChatting chatting : chattingList) {
-            messages.add(chatting.getMessage());
+            if (chatting.getMessageType() == 1) {
+                messages.add(chatting.getMessage());
+            } else if (chatting.getMessageType() ==  2) {
+                messages.add(chatting.getMessage()+" amount: "+ chatting.getAmount());
+            } else {
+                messages.add(chatting.getMessage());
+            }
         }
         return messages;
     }
@@ -76,17 +91,19 @@ public class ChattingController {
     @PostMapping(value = "/send-message", produces = "application/json")
     public @ResponseBody ChatResponse sendMessage (@RequestBody ChatRequest chatRequest, @RequestParam("uid") String uid) throws FirebaseAuthException {
         String message = chatRequest.getMessage();
+        String friendId = chatRequest.getUserIdTo();
         TbChatting tbChatting = new TbChatting();
         tbChatting.setMessage(message);
         tbChatting.setMessageType(1);
-        tbChatting.setUserIdFrom(uid);
+        tbChatting.setAmount(null);
+        tbChatting.setUserIdTo(friendId);
         tbChatting.setCreatedBy(uid);
         tbChatting.setUpdatedBy(uid);
-        tbChatting.setUserIdTo(String.valueOf(2));
+        tbChatting.setUserIdFrom(uid);
         tbChattingRepository.save(tbChatting);
-        ChatResponse response = new ChatResponse();
-        response.setMessage(message);
-        response.setStatus("success");
-        return response;
+        ChatResponse responses = new ChatResponse();
+        responses.setMessage(message);
+        responses.setStatus("success");
+        return responses;
     }
 }

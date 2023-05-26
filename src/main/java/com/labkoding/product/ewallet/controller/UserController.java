@@ -18,7 +18,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping("/save-user")
     public void saveUser(@RequestParam("uid") String uid, @RequestParam("email") String email) throws FirebaseAuthException {
         System.out.println("UID: " + uid);
         userService.saveUser(uid, email);

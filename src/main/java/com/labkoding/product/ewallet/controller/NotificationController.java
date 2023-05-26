@@ -42,6 +42,7 @@ public class NotificationController {
         tbMoneyRepository.save(tbMoney);
         TbTransaction tbTransaction = new TbTransaction();
         tbTransaction.setAmount(amount);
+        tbTransaction.setUserId(tbUser.getUid());
         tbTransaction.setStatus(1);
         tbTransaction.setTransactionId(UUID.randomUUID().toString());
         tbTransaction.setDescription("Topup "+ virtualAccount);

@@ -17,7 +17,7 @@ public class MoneyController {
         this.moneyService = moneyService;
     }
 
-    @GetMapping("/get")
+    @GetMapping("/get-money")
     public ResponseEntity<Map<String, Object>> getMoney(@RequestParam("uid") String uid) throws FirebaseAuthException {
         BigDecimal amount = moneyService.getMoney(uid);
         Map<String, Object> response = new HashMap<>();

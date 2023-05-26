@@ -10,4 +10,5 @@ public class ChatRequest {
     private String message;
     private BigDecimal amount;
     private String uid;
+    private String userIdTo;
 }

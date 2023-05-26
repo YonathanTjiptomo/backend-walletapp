@@ -43,6 +43,7 @@ public class QrApproveController {
         tbMoneyRepository.save(tbMoney);
         TbTransaction tbTransaction = new TbTransaction();
         tbTransaction.setAmount(amount);
+        tbTransaction.setUserId(tbMoney.getUid());
         tbTransaction.setStatus(1);
         tbTransaction.setTransactionId(UUID.randomUUID().toString());
         tbTransaction.setDescription("Qr Payment");

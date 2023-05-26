@@ -18,11 +18,11 @@ public class PaymentController {
     @Autowired
     TbTransactionRepository tbTransactionRepository;
     @RequestMapping(value= {"/submit-transaction"}, method= RequestMethod.POST, produces = "application/json")
-    public @ResponseBody Map submitTransaction(@RequestBody Map request) throws ParseException {
-
+    public @ResponseBody Map submitTransaction(@RequestBody Map request ,@RequestParam("uid") String uid) throws ParseException {
         Map response= new HashMap();
         TbTransaction tbTransaction = new TbTransaction();
         tbTransaction.setTransactionId((String) request.get("transactionId"));
+        tbTransaction.setUserId(uid);
         tbTransaction.setAmount(new BigDecimal((Integer) request.get("amount")));
         tbTransaction.setTransactionDate(Util.stringToDate((String) request.get("transactionDate"), "yyyy-MM-dd HH:mm:ss.SSS Z"));
         tbTransaction.setDescription((String) request.get("description"));
@@ -35,9 +35,9 @@ public class PaymentController {
     }
 
     @RequestMapping(value = {"/view-transaction"}, method = RequestMethod.POST, produces = "application/json")
-    public @ResponseBody List<TbTransaction> viewTransaction(@RequestBody Map request) {
+    public @ResponseBody List<TbTransaction> viewTransaction(@RequestBody Map request, @RequestParam("uid") String uid) {
         System.out.println("test");
-        List<TbTransaction> allData = tbTransactionRepository.findAll();
+        List<TbTransaction> allData = tbTransactionRepository.findAllByUserId(uid);
         return allData;
     }
 

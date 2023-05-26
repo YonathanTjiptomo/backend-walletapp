@@ -22,6 +22,9 @@ public class TbTransaction {
     @Column(name = "transaction_id", nullable = false, unique = true)
     private String transactionId;
 
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 

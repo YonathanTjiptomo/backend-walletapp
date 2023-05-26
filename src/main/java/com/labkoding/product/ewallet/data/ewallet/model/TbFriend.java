@@ -1,47 +1,36 @@
 package com.labkoding.product.ewallet.data.ewallet.model;
-
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Date;
+
 
 @Setter
 @Getter
 @Entity
-@Table(name = "tb_chatting")
-public class TbChatting {
+@Table(name = "tb_friend")
+public class TbFriend {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+
+    @Column(name = "user_id_friend", nullable = false, unique = true)
+    private String userIdFriend;
 
     @Column(name = "created_dt", nullable = false)
     private Date createdDt;
+
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
 
     @Column(name = "updated_dt", nullable = false)
     private Date updatedDt;
 
     @Column(name = "updated_by", nullable = false)
     private String updatedBy;
-
-    @Column(name = "user_id_from", nullable = false)
-    private String userIdFrom;
-
-    @Column(name = "user_id_to", nullable = false)
-    private String userIdTo;
-
-    @Column(name = "message", nullable = false)
-    private String message;
-
-    @Column(name = "message_type", nullable = false)
-    private Integer messageType;
-
-    @Column(name = "amount", nullable = true)
-    private BigDecimal amount;
 
     @PrePersist
     protected void prePersist(){
