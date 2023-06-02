@@ -1,27 +1,23 @@
 package com.labkoding.product.ewallet.data.ewallet.model;
+
+
 import lombok.Getter;
 import lombok.Setter;
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 
+import javax.persistence.*;
+import java.util.Date;
 
 @Setter
 @Getter
 @Entity
-@Table(name = "tb_friend")
-public class TbFriend implements Serializable {
-    private static final long serialVersionUID = 1L;
+@Table(name = "tb_notifikasi")
+public class TbNotifikasi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private  Integer id;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
-
-    @OneToOne(optional = true)
-    @JoinColumn(name = "user_id_friend", nullable = false, referencedColumnName = "user_id")
-    private TbUser friend;
+    @Column(name = "pesan_notif", nullable = false)
+    private String pesanNotif;
 
     @Column(name = "created_dt", nullable = false)
     private Date createdDt;
@@ -34,6 +30,9 @@ public class TbFriend implements Serializable {
 
     @Column(name = "updated_by", nullable = false)
     private String updatedBy;
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     @PrePersist
     protected void prePersist(){

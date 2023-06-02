@@ -1,5 +1,4 @@
 package com.labkoding.product.ewallet.data.ewallet.request;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,4 +6,5 @@ import lombok.Setter;
 @Getter
 public class FriendRequest {
     private String email;
+    private String friendId;
 }

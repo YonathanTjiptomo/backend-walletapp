@@ -8,6 +8,9 @@ import com.labkoding.product.ewallet.data.ewallet.request.FriendRequest;
 import com.labkoding.product.ewallet.data.ewallet.response.FriendResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,25 +24,39 @@ public class FriendController {
     TbFriendRepository tbFriendRepository;
     @RequestMapping(value= {"/add-friend"}, method= RequestMethod.POST, produces = "application/json")
     public @ResponseBody FriendResponse addFriend(@RequestBody FriendRequest friendRequest, @RequestParam("uid") String uid) throws FirebaseAuthException {
-        String uidFriend = friendRequest.getEmail();
-        TbUser tbUser = tbUserRepository.findByEmail(uidFriend).orElse(null);
+        String friendEmail = friendRequest.getEmail();
+        TbUser myFriendEmail = tbUserRepository.findByEmail(friendEmail).orElse(null);
+        TbUser myUserId = tbUserRepository.findByUid(uid).orElse(null);
         TbFriend tbFriend = new TbFriend();
-        tbFriend.setUserId(uid);
-        if (tbUser == null){
+        TbFriend friend = new TbFriend();
+        if (myFriendEmail == null) {
             return null;
         }
-        tbFriend.setUserIdFriend(tbUser.getUid());
+        friend.setUserId(myFriendEmail.getUid());
+        friend.setFriend(myUserId);
+        friend.setUpdatedBy(uid);
+        friend.setCreatedBy(uid);
+        tbFriend.setUserId(uid);
+        tbFriend.setFriend(myFriendEmail);
         tbFriend.setCreatedBy(uid);
         tbFriend.setUpdatedBy(uid);
+        tbFriendRepository.save(friend);
         tbFriendRepository.save(tbFriend);
         FriendResponse friendResponse = new FriendResponse();
-        friendResponse.setEmail(tbUser.getEmail());
+        friendResponse.setEmail(myFriendEmail.getEmail());
         return friendResponse;
     }
 
     @RequestMapping(value = {"/get-friend"}, method = RequestMethod.POST, produces = "application/json")
-    public List<TbFriend> getFriend(@RequestBody Map request, @RequestParam("uid") String uid) {
-        List<TbFriend> friendList = tbFriendRepository.findAllByUserId(uid);
-        return friendList;
+    public List<Map<String, String>> getFriend(@RequestParam("uid") String uid) {
+        List<TbFriend> friendList = tbFriendRepository.findByUserId(uid);
+        List<Map<String, String>> friendDataList = new ArrayList<>();
+        for (TbFriend friend : friendList) {
+            Map<String, String> friendData = new HashMap<>();
+            friendData.put("userIdFriend", friend.getFriend().getUid());
+            friendData.put("friendEmail", friend.getFriend().getEmail());
+            friendDataList.add(friendData);
+        }
+        return friendDataList;
     }
 }

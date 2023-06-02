@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TbFriendRepository extends JpaRepository<TbFriend, Integer> {
-    List<TbFriend> findAllByUserId(String uid);
+    List<TbFriend> findByUserId(String uid);
 }

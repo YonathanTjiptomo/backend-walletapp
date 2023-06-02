@@ -1,12 +1,13 @@
 package com.labkoding.product.ewallet.controller;
-
 import com.google.firebase.auth.FirebaseAuthException;
 import com.labkoding.product.ewallet.ResourceNotFoundException;
 import com.labkoding.product.ewallet.data.ewallet.model.TbChatting;
 import com.labkoding.product.ewallet.data.ewallet.model.TbMoney;
+import com.labkoding.product.ewallet.data.ewallet.model.TbNotifikasi;
 import com.labkoding.product.ewallet.data.ewallet.model.TbTransaction;
 import com.labkoding.product.ewallet.data.ewallet.repo.TbChattingRepository;
 import com.labkoding.product.ewallet.data.ewallet.repo.TbMoneyRepository;
+import com.labkoding.product.ewallet.data.ewallet.repo.TbNotifikasiRepository;
 import com.labkoding.product.ewallet.data.ewallet.repo.TbTransactionRepository;
 import com.labkoding.product.ewallet.data.ewallet.request.ChatRequest;
 import com.labkoding.product.ewallet.data.ewallet.response.ChatResponse;
@@ -31,6 +32,9 @@ public class ChattingController {
     @Autowired
     TbTransactionRepository tbTransactionRepository;
 
+    @Autowired
+    TbNotifikasiRepository tbNotifikasiRepository;
+
 
     @RequestMapping(value = {"/send-money"}, method = RequestMethod.POST, produces = "application/json")
     public @ResponseBody ChatResponse sendMoney (@RequestBody ChatRequest chatRequest, @RequestParam("uid") String uid) throws FirebaseAuthException {
@@ -48,6 +52,8 @@ public class ChattingController {
         tbChattingRepository.save(tbChatting);
         BigDecimal saldo = moneyService.getMoney(uid);
         TbMoney tbMoney = tbMoneyRepository.findByUid(uid).orElse(null);
+        TbMoney money = tbMoneyRepository.findByUid(friendId).orElse(null);
+        money.setAmount(money.getAmount().add(amount));
         if (tbMoney == null){
             return null;
         }
@@ -55,15 +61,36 @@ public class ChattingController {
         if (saldo.compareTo(amount)<0) {
             throw new ResourceNotFoundException("Money not enough");
         }
+        tbMoneyRepository.save(money);
         tbMoneyRepository.save(tbMoney);
         TbTransaction tbTransaction = new TbTransaction();
+        TbTransaction transaction = new TbTransaction();
         tbTransaction.setAmount(amount);
         tbTransaction.setUserId(uid);
         tbTransaction.setStatus(1);
         tbTransaction.setTransactionId(UUID.randomUUID().toString());
         tbTransaction.setDescription("Send Money");
         tbTransaction.setTransactionDate(new Date());
+        transaction.setAmount(amount);
+        transaction.setUserId(friendId);
+        transaction.setStatus(1);
+        transaction.setTransactionId(UUID.randomUUID().toString());
+        transaction.setDescription("Terima Saldo");
+        transaction.setTransactionDate(new Date());
+        tbTransactionRepository.save(transaction);
         tbTransactionRepository.save(tbTransaction);
+        TbNotifikasi notifikasi = new TbNotifikasi();
+        TbNotifikasi tbNotifikasi = new TbNotifikasi();
+        tbNotifikasi.setUserId(friendId);
+        tbNotifikasi.setPesanNotif("Saldo Diterima");
+        tbNotifikasi.setCreatedBy(uid);
+        tbNotifikasi.setUpdatedBy(uid);
+        notifikasi.setUserId(uid);
+        notifikasi.setPesanNotif("Pengiriman Saldo Berhasil");
+        notifikasi.setCreatedBy(uid);
+        notifikasi.setUpdatedBy(uid);
+        tbNotifikasiRepository.save(tbNotifikasi);
+        tbNotifikasiRepository.save(notifikasi);
         ChatResponse response = new ChatResponse();
         response.setMessage(message);
         response.setAmount(amount);
@@ -89,7 +116,7 @@ public class ChattingController {
     }
 
     @PostMapping(value = "/send-message", produces = "application/json")
-    public @ResponseBody ChatResponse sendMessage (@RequestBody ChatRequest chatRequest, @RequestParam("uid") String uid) throws FirebaseAuthException {
+    public @ResponseBody ChatResponse sendMessage (@RequestBody ChatRequest chatRequest, @RequestParam("uid") String uid) {
         String message = chatRequest.getMessage();
         String friendId = chatRequest.getUserIdTo();
         TbChatting tbChatting = new TbChatting();
@@ -101,6 +128,12 @@ public class ChattingController {
         tbChatting.setUpdatedBy(uid);
         tbChatting.setUserIdFrom(uid);
         tbChattingRepository.save(tbChatting);
+        TbNotifikasi tbNotifikasi = new TbNotifikasi();
+        tbNotifikasi.setCreatedBy(uid);
+        tbNotifikasi.setUpdatedBy(uid);
+        tbNotifikasi.setUserId(friendId);
+        tbNotifikasi.setPesanNotif("Pesan Masuk");
+        tbNotifikasiRepository.save(tbNotifikasi);
         ChatResponse responses = new ChatResponse();
         responses.setMessage(message);
         responses.setStatus("success");

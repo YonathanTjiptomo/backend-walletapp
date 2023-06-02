@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class NotificationRequest {
+public class TopUpRequest {
     private String virtualAccount;
     private Integer amount;
 }
